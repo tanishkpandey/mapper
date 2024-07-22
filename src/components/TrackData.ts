@@ -1,0 +1,17 @@
+export const Track = {
+  drivername: "",
+  permitendDate: "",
+  transitType: "",
+  permitstartDate: "",
+  permitno: "",
+  via: "",
+  consigneeename: "",
+  vehnum: "",
+  material: "",
+  qty: "",
+  sms: "",
+  imei: "",
+  driverphone: "",
+  vehtype: "",
+  consignorname: "",
+};
