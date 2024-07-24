@@ -49,33 +49,37 @@ const ConvoyForm: React.FC = () => {
     e.preventDefault();
 
     const payload = {
-      appID: "01J3J24Z3FWTVW6FXJR6X5PT1J",
-      authentication: {
-        api_key: {
-          header_name: "Authorization",
-          header_value: `Bearer ${formValues.apiKey}`,
+      "advanced_signatures": true,
+      "appID": "01J3K08ESQ1SJC08RY9PY87KQJ",
+      "authentication": {
+        "api_key": {
+          "header_name": "Authorization",
+          "header_value": "Bearer CO.2xkcKo6wjkxb3XXq.QWhuAfCtPU4xtr3BVnNr1vDWhL5kPGo0UQeHyyozYEhui0ciaHVRG5SCPVWKgJcn"
         },
-        type: "api_key",
+        "type": "api_key"
       },
-      is_disabled: formValues.is_disabled,
-      name: formValues.name,
-      owner_id: formValues.owner_id,
-      rate_limit: parseInt(formValues.rate_limit, 10),
-      rate_limit_duration: formValues.rate_limit_duration,
-      secret: formValues.secret,
-      support_email: formValues.support_email,
-      url: formValues.url,
-    };
+      "description": "this",
+      "http_timeout": 10,
+      "is_disabled": true,
+      "name": "mala2",
+      "owner_id": "01J3K07Y3NC9VR5W7A3HYFKPJM",
+      "rate_limit": 10,
+      "rate_limit_duration": 10,
+      "secret": "",
+      "slack_webhook_url": "",
+      "support_email": "malav.naagar@imzcoprorate.com",
+      "url": "https://webhook.site/c1c51810-6160-4b74-8c27-5bbfdec5dbe7"
+    }
 
     try {
       const response = await axios.post(
-        "http://103.20.214.75:5005/api/v1/projects/01J3J24Z3FWTVW6FXJR6X5PT1J/endpoints",
+        "https://cors-anywhere.herokuapp.com/https://convoy.imztech.io/api/v1/projects/01J3J24Z3FWTVW6FXJR6X5PT1J/endpoints",
         payload,
         {
           headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
+            // "Access-Control-Allow-Origin": "*",
+            // "Access-Control-Allow-Methods": "*",
           },
         }
       );
