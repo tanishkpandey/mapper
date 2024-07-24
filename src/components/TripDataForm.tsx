@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Trip } from "./TripData";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import PerfectScrollbar from "react-perfect-scrollbar";
-// import { useFormContext } from "../context/FormContext";
 
 interface AuthValues {
   basicAuthToken?: string;
@@ -18,32 +17,25 @@ interface Props {
 }
 
 const TripDataForm: React.FC<Props> = ({ trackData, onSubmit }) => {
-  const [checkedFields, setCheckedFields] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [fixedFieldValues, setFixedFieldValues] = useState<{
-    [key: string]: string;
-  }>({});
+  const [checkedFields, setCheckedFields] = useState<{ [key: string]: boolean }>({});
+  const [fixedFieldValues, setFixedFieldValues] = useState<{ [key: string]: string }>({});
   const [newFields, setNewFields] = useState<number[]>([]);
-  const [addOnFieldValues, setAddOnFieldValues] = useState<{
-    [key: string]: string;
-  }>({});
-  const [savedAddOnFields, setSavedAddOnFields] = useState<{
-    [key: string]: string;
-  }>({});
+  const [addOnFieldValues, setAddOnFieldValues] = useState<{ [key: string]: string }>({});
+  const [savedAddOnFields, setSavedAddOnFields] = useState<{ [key: string]: string }>({});
   const [authMethod, setAuthMethod] = useState<string>("");
   const [authValues, setAuthValues] = useState<AuthValues>({});
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [generatedToken, setGeneratedToken] = useState<string>("");
-  // const { formValues, setFormValues } = useFormContext();
-  const [formValues, setFormValues] = useState({});
-  
-  const collectionOptions = [
-    "EXCISE_TRACKDATA",
-    "TRIP",
-    "Collection1",
-    "Collection2",
-  ];
+  const [formValues, setFormValues] = useState({
+    project: "",
+    convoy_project_id: "",
+    convoy_endpoint_id: "",
+    account: "",
+    collectionName: [] as string[],
+    pushData: "",
+  });
+
+  const collectionOptions = ["EXCISE_TRACKDATA", "TRIP", "Collection1", "Collection2"];
 
   const handleAddFields = () => {
     setNewFields([...newFields, newFields.length + 1]);
@@ -63,20 +55,14 @@ const TripDataForm: React.FC<Props> = ({ trackData, onSubmit }) => {
     }));
   };
 
-  const handleAddOnFieldChange = (
-    index: number,
-    subIndex: number,
-    value: string
-  ) => {
+  const handleAddOnFieldChange = (index: number, subIndex: number, value: string) => {
     setAddOnFieldValues((prevState) => ({
       ...prevState,
       [`addOnField${index + 1}-${subIndex + 1}`]: value,
     }));
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     if (name === "account") {
@@ -106,14 +92,8 @@ const TripDataForm: React.FC<Props> = ({ trackData, onSubmit }) => {
         [name]: value,
       };
 
-      if (
-        authMethod === "BasicAuth" &&
-        updatedValues.useName &&
-        updatedValues.password
-      ) {
-        const token = btoa(
-          `${updatedValues.useName}:${updatedValues.password}`
-        );
+      if (authMethod === "BasicAuth" && updatedValues.useName && updatedValues.password) {
+        const token = btoa(`${updatedValues.useName}:${updatedValues.password}`);
         updatedValues.basicAuthToken = `Basic ${token}`;
       }
 
@@ -169,12 +149,8 @@ const TripDataForm: React.FC<Props> = ({ trackData, onSubmit }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const TripDataMapper: {
-      [key: string]: { enabled: boolean; newKey: string };
-    } = {};
-    const TripDataAddOnFields: {
-      [key: string]: { enabled: boolean; newKey: string };
-    } = {};
+    const TripDataMapper: { [key: string]: { enabled: boolean; newKey: string } } = {};
+    const TripDataAddOnFields: { [key: string]: { enabled: boolean; newKey: string } } = {};
 
     for (const key in Trip) {
       if (Trip.hasOwnProperty(key)) {
@@ -356,9 +332,7 @@ const TripDataForm: React.FC<Props> = ({ trackData, onSubmit }) => {
                   />
                   <button
                     type="button"
-                    onClick={() =>
-                      setGeneratedToken(authValues.basicAuthToken || "")
-                    }
+                    onClick={() => setGeneratedToken(authValues.basicAuthToken || "")}
                     className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Generate
@@ -386,9 +360,7 @@ const TripDataForm: React.FC<Props> = ({ trackData, onSubmit }) => {
                   />
                   <button
                     type="button"
-                    onClick={() =>
-                      setGeneratedToken(authValues.tokenValue || "")
-                    }
+                    onClick={() => setGeneratedToken(authValues.tokenValue || "")}
                     className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Generate Token
@@ -456,10 +428,7 @@ const TripDataForm: React.FC<Props> = ({ trackData, onSubmit }) => {
                       className="mr-2"
                       onChange={() => handleCheckboxChange(field)}
                     />
-                    <label
-                      htmlFor={field}
-                      className="text-gray-700 text-left text-sm w-1/3"
-                    >
+                    <label htmlFor={field} className="text-gray-700 text-left text-sm w-1/3">
                       {field}
                     </label>
                     <input
@@ -467,9 +436,7 @@ const TripDataForm: React.FC<Props> = ({ trackData, onSubmit }) => {
                       className="w-2/3 block py-1 px-3 text-sm border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                       placeholder={`Enter new key for ${field}`}
                       disabled={!checkedFields[field]}
-                      onChange={(e) =>
-                        handleFixedFieldChange(field, e.target.value)
-                      }
+                      onChange={(e) => handleFixedFieldChange(field, e.target.value)}
                     />
                   </div>
                 ))}
@@ -482,10 +449,7 @@ const TripDataForm: React.FC<Props> = ({ trackData, onSubmit }) => {
               </label>
               <div className="grid grid-cols-12 gap-4">
                 {Object.keys(savedAddOnFields).map((key) => (
-                  <div
-                    key={key}
-                    className="col-span-12 flex items-center space-x-2"
-                  >
+                  <div key={key} className="col-span-12 flex items-center space-x-2">
                     <input
                       type="text"
                       value={key}
@@ -511,27 +475,20 @@ const TripDataForm: React.FC<Props> = ({ trackData, onSubmit }) => {
                   const keyField = `addOnField${index + 1}-1`;
                   const valueField = `addOnField${index + 1}-2`;
                   return (
-                    <div
-                      key={index}
-                      className="col-span-12 flex items-center space-x-2"
-                    >
+                    <div key={index} className="col-span-12 flex items-center space-x-2">
                       <input
                         type="text"
                         value={addOnFieldValues[keyField] || ""}
                         className="block w-1/2 py-1 px-3 text-sm border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         placeholder="Key"
-                        onChange={(e) =>
-                          handleAddOnFieldChange(index, 0, e.target.value)
-                        }
+                        onChange={(e) => handleAddOnFieldChange(index, 0, e.target.value)}
                       />
                       <input
                         type="text"
                         value={addOnFieldValues[valueField] || ""}
                         className="block w-1/2 py-1 px-3 text-sm border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         placeholder="Value"
-                        onChange={(e) =>
-                          handleAddOnFieldChange(index, 1, e.target.value)
-                        }
+                        onChange={(e) => handleAddOnFieldChange(index, 1, e.target.value)}
                       />
                       <button
                         type="button"
