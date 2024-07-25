@@ -4,6 +4,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { useFormContext } from "../context/FormContext";
+import { toast } from "react-toastify";
 
 interface Props {
   tripData: any;
@@ -11,7 +12,11 @@ interface Props {
   responseData: any;
 }
 
-const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) => {
+const TrackDataForm: React.FC<Props> = ({
+  tripData,
+  onSubmit,
+  responseData,
+}) => {
   const { trackFormValues, setTrackFormValues } = useFormContext();
   const [checkedFields, setCheckedFields] = useState<{
     [key: string]: boolean;
@@ -28,16 +33,79 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
   }>({});
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const collectionOptions = [
-    "EXCISE_TRACKDATA",
-    "TRIP",
-    "Collection1",
-    "Collection2",
+    "ADN_RAWDATA",
+    "ATM_RAWDATA",
+    "ATM_TRACKDATA",
+    "BHEX_RAWDATA",
+    "BHEX_TRACKDATA",
+    "BSFC_ALERTDATA",
+    "BSFC_RAWDATA",
+    "BSFC_RESPDATA",
+    "BSFC_TRACKDATA",
+    "BSNL_RAWDATA",
+    "COMMON_CONFIG",
+    "DLVR_RAWDATA",
+    "DLVR_TRACKDATA",
+    "ELK_ALERTDATA",
+    "ELK_RAWDATA",
+    "ELK_RESPDATA",
+    "ELK_TRACKDATA",
+    "EX_ALERTDATA",
+    "EX_RAWDATA",
+    "EX_RESPDATA",
+    "EX_TRACKDATA",
+    "GEO_HUBS",
+    "GSCS_ALERTDATA",
+    "GSCS_RAWDATA",
+    "GSCS_RESPDATA",
+    "GSCS_TRACKDATA",
+    "IMZ_ALERTDATA",
+    "IMZ_PUSH_TO_CLIENT",
+    "IMZ_RAWDATA",
+    "IMZ_RESPDATA",
+    "IMZ_TRACKDATA",
+    "IMZ_TRIPS",
+    "LOCATIONS",
+    "LORA_ALERTDATA",
+    "LORA_TRACKDATA",
+    "MATERIALS",
+    "NTA_ALERTDATA",
+    "NTA_RAWDATA",
+    "NTA_RESPDATA",
+    "NTA_TRACKDATA",
+    "PRAJ_ALERTDATA",
+    "PRAJ_GEN_REPORT",
+    "PRAJ_NONFUNC_REPORT",
+    "PRAJ_RAWDATA",
+    "PRAJ_REPORT",
+    "PRAJ_TRACKDATA",
+    "PUSH_TO_CLIENT",
+    "ROUTE",
+    "ROUTE_GEO",
+    "TM_ALERTDATA",
+    "TM_RAWDATA",
+    "TM_TRACKDATA",
+    "TRIPS",
+    "TST_RAWDATA",
+    "TST_TRACKDATA",
+    "UPEX_ALERTDATA",
+    "UPEX_RAWDATA",
+    "UPEX_RESPDATA",
+    "UPEX_TRACKDATA",
+    "USER_RIGHTS",
+    "WBEX_ALERTDATA",
+    "WBEX_RAWDATA",
+    "_RAWDATA",
+    "ecom_tracks",
+    "loadcalibration",
+    "stops",
+    "trips",
   ];
 
   useEffect(() => {
-    if (Object.keys(tripData.TripDataMapper).length === 0) {
+    if (Object.keys(tripData.tripDataMapper).length === 0) {
       setFixedFieldValues({
-        ...tripData.TripDataMapper,
+        ...tripData.tripDataMapper,
         geocode: "",
         lat: "",
         lng: "",
@@ -55,9 +123,9 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
 
       setTrackFormValues((prevValues) => ({
         ...prevValues,
-        convoy_project_id: project_id || '',
-        convoy_api_key: apiKey || '',
-        convoy_endpoint_id: uid || '',
+        convoy_project_id: project_id || "",
+        convoy_api_key: apiKey || "",
+        convoyEndpointId: uid || "",
       }));
     }
   }, [responseData, setTrackFormValues]);
@@ -84,11 +152,11 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    if (name === 'account') {
+    if (name === "account") {
       setTrackFormValues({
         ...trackFormValues,
         [name]: value,
-        account: value.split(',').map((id) => id.trim()),
+        account: value.split(",").map((id) => id.trim()),
       });
     } else {
       setTrackFormValues({
@@ -101,12 +169,12 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
   const handleCollectionChange = (option: string) => {
     const newCollection = [...trackFormValues.collectionName];
     if (newCollection.includes(option)) {
-      setFormValues({
+      setTrackFormValues({
         ...trackFormValues,
         collectionName: newCollection.filter((item) => item !== option),
       });
     } else if (newCollection.length < 2) {
-      setFormValues({
+      setTrackFormValues({
         ...trackFormValues,
         collectionName: [...newCollection, option],
       });
@@ -125,19 +193,19 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
     });
   };
 
-  console.log(responseData)
-  const handleSubmit = (e: React.FormEvent) => {
+  // console.log(responseData);
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const TrackDataMapper: {
+    const trackDataMapper: {
       [key: string]: { enabled: boolean; newKey: string };
     } = {};
-    const TrackDataAddOnFields: {
+    const trackDataAddOnFields: {
       [key: string]: { enabled: boolean; newKey: string };
     } = {};
 
     for (const key in Track) {
       if (Track.hasOwnProperty(key)) {
-        TrackDataMapper[key] = {
+        trackDataMapper[key] = {
           enabled: !!checkedFields[key],
           newKey: checkedFields[key]
             ? fixedFieldValues[key] || Track[key]
@@ -148,7 +216,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
 
     for (const key in savedAddOnFields) {
       if (savedAddOnFields.hasOwnProperty(key)) {
-        TrackDataAddOnFields[key] = {
+        trackDataAddOnFields[key] = {
           enabled: true,
           newKey: savedAddOnFields[key],
         };
@@ -158,16 +226,54 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
     const data = {
       account: trackFormValues.account,
       collectionName: trackFormValues.collectionName,
-      convoy_project_id: trackFormValues.convoy_project_id,
-      convoy_endpoint_id: trackFormValues.convoy_endpoint_id,
+      convoyProjectId: trackFormValues.convoy_project_id,
+      convoyEndpointId: trackFormValues.convoy_endpoint_id,
       pushData: trackFormValues.pushData,
-      TrackDataMapper: TrackDataMapper,
-      TrackDataAddOnFields: TrackDataAddOnFields,
-      TripDataMapper: tripData.TripDataMapper || {},
-      TripDataAddOnFields: tripData.TripDataAddOnFields || {},
+      trackDataMapper: trackDataMapper,
+      trackDataAddOnFields: trackDataAddOnFields,
+      tripDataMapper: tripData.tripDataMapper || {},
+      tripDataAddOnFields: tripData.tripDataAddOnFields || {},
     };
 
-    onSubmit(data);
+    const toastId = toast.loading("Submitting...");
+
+    try {
+      const response = await fetch(
+        "http://localhost:5500/api/v1.0/saveDataFeed",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("API Response:", result);
+
+      toast.update(toastId, {
+        render: "Data submitted successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+
+      onSubmit(data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+
+      toast.update(toastId, {
+        render: "Error submitting data.",
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
+    }
   };
 
   return (
@@ -188,7 +294,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
               <input
                 type="text"
                 name="project"
-                value={trackFormValues.convoy_project_id || ''}
+                value={trackFormValues.convoy_project_id || ""}
                 onChange={handleInputChange}
                 className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Project ID"
@@ -203,7 +309,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
               <input
                 type="text"
                 name="convoy_project_id"
-                value={trackFormValues.convoy_api_key || ''}
+                value={trackFormValues.convoy_api_key || ""}
                 onChange={handleInputChange}
                 className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="API Key"
@@ -218,7 +324,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
               <input
                 type="text"
                 name="convoy_endpoint_id"
-                value={trackFormValues.convoy_endpoint_id || ''}
+                value={trackFormValues.convoy_endpoint_id || ""}
                 onChange={handleInputChange}
                 className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Endpoint ID"
@@ -254,12 +360,15 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) =>
                   Select Collection
                 </button>
                 {dropdownOpen && (
-                  <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-10">
+                  <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-10  h-[200px] overflow-y-scroll">
                     {collectionOptions.map((option) => (
                       <label key={option} className="flex items-center p-2">
                         <input
                           type="checkbox"
-                          checked={trackFormValues.collectionName.includes(option)}
+                          checked={
+                            trackFormValues.collectionName?.includes(option) ||
+                            false
+                          }
                           onChange={() => handleCollectionChange(option)}
                           className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                         />

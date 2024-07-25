@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 interface AuthValues {
   basicAuthToken?: string;
@@ -29,7 +30,6 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
     name: "",
     is_disabled: false,
     apiKey: "",
-    endpointId: "",
   });
 
   const handleInputChange = (
@@ -79,7 +79,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
       support_email: formValues.support_email,
       url: formValues.url,
     };
-
+    
     try {
       const response = await axios.post(
         `https://convoy.imztech.io/api/v1/projects/01J3J24Z3FWTVW6FXJR6X5PT1J/endpoints`,
@@ -111,8 +111,14 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
         [name]: value,
       };
 
-      if (authMethod === "BasicAuth" && updatedValues.useName && updatedValues.password) {
-        const token = btoa(`${updatedValues.useName}:${updatedValues.password}`);
+      if (
+        authMethod === "BasicAuth" &&
+        updatedValues.useName &&
+        updatedValues.password
+      ) {
+        const token = btoa(
+          `${updatedValues.useName}:${updatedValues.password}`
+        );
         updatedValues.basicAuthToken = `Basic ${token}`;
         setGeneratedToken(updatedValues.basicAuthToken);
         setFormValues((prevValues) => ({
@@ -333,7 +339,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 name="is_disabled"
                 checked={formValues.is_disabled}
                 onChange={handleInputChange}
-                className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                className="h-4 w-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
               />
               <span>True</span>
             </div>
@@ -350,21 +356,6 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="API Key"
                 aria-label="API Key"
-              />
-            </div>
-
-            <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
-                Endpoint ID
-              </label>
-              <input
-                type="text"
-                name="endpointId"
-                value={formValues.endpointId}
-                onChange={handleInputChange}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Endpoint ID"
-                aria-label="Endpoint ID"
               />
             </div>
           </div>
