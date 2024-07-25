@@ -3,40 +3,36 @@ import { Track } from "./TrackData";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import PerfectScrollbar from "react-perfect-scrollbar";
-// import { useFormContext } from "../context/FormContext";
-
-interface AuthValues {
-  basicAuthToken?: string;
-  useName?: string;
-  password?: string;
-  tokenValue?: string;
-}
+import { useFormContext } from "../context/FormContext";
 
 interface Props {
   tripData: any;
   onSubmit: (data: any) => void;
+  responseData: any;
 }
 
-const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
-  const [checkedFields, setCheckedFields] = useState<{ [key: string]: boolean }>({});
-  const [fixedFieldValues, setFixedFieldValues] = useState<{ [key: string]: string }>({});
+const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit, responseData }) => {
+  const { trackFormValues, setTrackFormValues } = useFormContext();
+  const [checkedFields, setCheckedFields] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [fixedFieldValues, setFixedFieldValues] = useState<{
+    [key: string]: string;
+  }>({});
   const [newFields, setNewFields] = useState<number[]>([]);
-  const [addOnFieldValues, setAddOnFieldValues] = useState<{ [key: string]: string }>({});
-  const [savedAddOnFields, setSavedAddOnFields] = useState<{ [key: string]: string }>({});
-  const [authMethod, setAuthMethod] = useState<string>("");
-  const [authValues, setAuthValues] = useState<AuthValues>({});
+  const [addOnFieldValues, setAddOnFieldValues] = useState<{
+    [key: string]: string;
+  }>({});
+  const [savedAddOnFields, setSavedAddOnFields] = useState<{
+    [key: string]: string;
+  }>({});
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [generatedToken, setGeneratedToken] = useState<string>("");
-  const [formValues, setFormValues] = useState({
-    project: "",
-    convoy_project_id: "",
-    convoy_endpoint_id: "",
-    account: "",
-    collectionName: [] as string[],
-    pushData: "",
-  });
-
-  const collectionOptions = ["EXCISE_TRACKDATA", "TRIP", "Collection1", "Collection2"];
+  const collectionOptions = [
+    "EXCISE_TRACKDATA",
+    "TRIP",
+    "Collection1",
+    "Collection2",
+  ];
 
   useEffect(() => {
     if (Object.keys(tripData.TripDataMapper).length === 0) {
@@ -50,6 +46,21 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
       });
     }
   }, [tripData]);
+
+  useEffect(() => {
+    if (responseData && responseData.data) {
+      const { uid, project_id, authentication } = responseData.data;
+      const headerValue = authentication.api_key.header_value;
+      const apiKey = headerValue.substring(7);
+
+      setTrackFormValues((prevValues) => ({
+        ...prevValues,
+        convoy_project_id: project_id || '',
+        convoy_api_key: apiKey || '',
+        convoy_endpoint_id: uid || '',
+      }));
+    }
+  }, [responseData, setTrackFormValues]);
 
   const handleAddFields = () => {
     setNewFields([...newFields, newFields.length + 1]);
@@ -69,62 +80,34 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
     }));
   };
 
-  const handleAddOnFieldChange = (index: number, subIndex: number, value: string) => {
-    setAddOnFieldValues((prevState) => ({
-      ...prevState,
-      [`addOnField${index + 1}-${subIndex + 1}`]: value,
-    }));
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-
-    if (name === "account") {
-      setFormValues({
-        ...formValues,
+    if (name === 'account') {
+      setTrackFormValues({
+        ...trackFormValues,
         [name]: value,
-        account: value.split(",").map((id) => id.trim()),
+        account: value.split(',').map((id) => id.trim()),
       });
     } else {
-      setFormValues({
-        ...formValues,
+      setTrackFormValues({
+        ...trackFormValues,
         [name]: value,
       });
     }
   };
 
-  const handleAuthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setAuthMethod(e.target.value);
-    setAuthValues({});
-  };
-
-  const handleAuthValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setAuthValues((prevState) => {
-      const updatedValues = {
-        ...prevState,
-        [name]: value,
-      };
-
-      if (authMethod === "BasicAuth" && updatedValues.useName && updatedValues.password) {
-        const token = btoa(`${updatedValues.useName}:${updatedValues.password}`);
-        updatedValues.basicAuthToken = `Basic ${token}`;
-      }
-
-      return updatedValues;
-    });
-  };
-
   const handleCollectionChange = (option: string) => {
-    const newCollection = [...formValues.collectionName];
+    const newCollection = [...trackFormValues.collectionName];
     if (newCollection.includes(option)) {
       setFormValues({
-        ...formValues,
+        ...trackFormValues,
         collectionName: newCollection.filter((item) => item !== option),
       });
     } else if (newCollection.length < 2) {
       setFormValues({
-        ...formValues,
+        ...trackFormValues,
         collectionName: [...newCollection, option],
       });
     }
@@ -132,25 +115,6 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
-  };
-
-  const handleSaveAddOnField = (index: number) => {
-    const keyField = `addOnField${index + 1}-1`;
-    const valueField = `addOnField${index + 1}-2`;
-    const key = addOnFieldValues[keyField];
-    const value = addOnFieldValues[valueField];
-
-    if (key && value) {
-      setSavedAddOnFields((prevState) => ({
-        ...prevState,
-        [key]: value,
-      }));
-      setAddOnFieldValues((prevState) => ({
-        ...prevState,
-        [keyField]: "",
-        [valueField]: "",
-      }));
-    }
   };
 
   const handleDeleteAddOnField = (key: string) => {
@@ -161,16 +125,23 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
     });
   };
 
+  console.log(responseData)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const TrackDataMapper: { [key: string]: { enabled: boolean; newKey: string } } = {};
-    const TrackDataAddOnFields: { [key: string]: { enabled: boolean; newKey: string } } = {};
+    const TrackDataMapper: {
+      [key: string]: { enabled: boolean; newKey: string };
+    } = {};
+    const TrackDataAddOnFields: {
+      [key: string]: { enabled: boolean; newKey: string };
+    } = {};
 
     for (const key in Track) {
       if (Track.hasOwnProperty(key)) {
         TrackDataMapper[key] = {
           enabled: !!checkedFields[key],
-          newKey: checkedFields[key] ? fixedFieldValues[key] || Track[key] : key,
+          newKey: checkedFields[key]
+            ? fixedFieldValues[key] || Track[key]
+            : key,
         };
       }
     }
@@ -184,23 +155,12 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
       }
     }
 
-    const authData: any = {
-      type: authMethod === "BasicAuth" ? "Basic" : "Bearer",
-    };
-
-    if (authMethod === "BasicAuth") {
-      authData.basicAuthToken = authValues.basicAuthToken;
-    } else if (authMethod === "Bearer") {
-      authData.tokenValue = authValues.tokenValue;
-    }
-
     const data = {
-      account: formValues.account,
-      collectionName: formValues.collectionName,
-      convoy_project_id: formValues.convoy_project_id,
-      convoy_endpoint_id: formValues.convoy_endpoint_id,
-      pushData: formValues.pushData,
-      auth: authData,
+      account: trackFormValues.account,
+      collectionName: trackFormValues.collectionName,
+      convoy_project_id: trackFormValues.convoy_project_id,
+      convoy_endpoint_id: trackFormValues.convoy_endpoint_id,
+      pushData: trackFormValues.pushData,
       TrackDataMapper: TrackDataMapper,
       TrackDataAddOnFields: TrackDataAddOnFields,
       TripDataMapper: tripData.TripDataMapper || {},
@@ -228,7 +188,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
               <input
                 type="text"
                 name="project"
-                value={formValues.project}
+                value={trackFormValues.convoy_project_id || ''}
                 onChange={handleInputChange}
                 className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Project ID"
@@ -243,7 +203,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
               <input
                 type="text"
                 name="convoy_project_id"
-                value={formValues.convoy_project_id}
+                value={trackFormValues.convoy_api_key || ''}
                 onChange={handleInputChange}
                 className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="API Key"
@@ -258,7 +218,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
               <input
                 type="text"
                 name="convoy_endpoint_id"
-                value={formValues.convoy_endpoint_id}
+                value={trackFormValues.convoy_endpoint_id || ''}
                 onChange={handleInputChange}
                 className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Endpoint ID"
@@ -273,7 +233,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
               <input
                 type="text"
                 name="account"
-                value={formValues.account}
+                value={trackFormValues.account}
                 onChange={handleInputChange}
                 className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Account ID"
@@ -299,7 +259,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
                       <label key={option} className="flex items-center p-2">
                         <input
                           type="checkbox"
-                          checked={formValues.collectionName.includes(option)}
+                          checked={trackFormValues.collectionName.includes(option)}
                           onChange={() => handleCollectionChange(option)}
                           className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                         />
@@ -309,88 +269,6 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
                   </div>
                 )}
               </div>
-            </div>
-
-            <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
-                Authentication
-              </label>
-              <select
-                id="authMethod"
-                name="authMethod"
-                value={authMethod}
-                onChange={handleAuthChange}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              >
-                <option value="">Select Authentication</option>
-                <option value="BasicAuth">Basic Auth</option>
-                <option value="Bearer">Token</option>
-              </select>
-              {authMethod === "BasicAuth" && (
-                <div className="mt-4 space-y-4">
-                  <input
-                    type="text"
-                    name="useName"
-                    value={authValues.useName || ""}
-                    onChange={handleAuthValueChange}
-                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    placeholder="Username"
-                    aria-label="Username"
-                  />
-                  <input
-                    type="password"
-                    name="password"
-                    value={authValues.password || ""}
-                    onChange={handleAuthValueChange}
-                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    placeholder="Password"
-                    aria-label="Password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setGeneratedToken(authValues.basicAuthToken || "")}
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Generate
-                  </button>
-                  {generatedToken && (
-                    <div className="mt-4 p-2 border border-gray-300 rounded-md shadow-sm">
-                      <label className="block text-gray-700 font-medium mb-2 text-sm">
-                        Generated Token
-                      </label>
-                      <p className="break-all text-sm">{generatedToken}</p>
-                    </div>
-                  )}
-                </div>
-              )}
-              {authMethod === "Bearer" && (
-                <div className="mt-4">
-                  <input
-                    type="text"
-                    name="tokenValue"
-                    value={authValues.tokenValue || ""}
-                    onChange={handleAuthValueChange}
-                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    placeholder="Token"
-                    aria-label="Token"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setGeneratedToken(authValues.tokenValue || "")}
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Generate Token
-                  </button>
-                  {generatedToken && (
-                    <div className="mt-4 p-2 border border-gray-300 rounded-md shadow-sm">
-                      <label className="block text-gray-700 font-medium mb-2 text-sm">
-                        Generated Token
-                      </label>
-                      <p className="break-all">{generatedToken}</p>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
 
             <div className="mb-6">
@@ -405,7 +283,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
                     id="all-time"
                     name="pushData"
                     value="all-times"
-                    checked={formValues.pushData === "all-times"}
+                    checked={trackFormValues.pushData === "all-times"}
                     onChange={handleInputChange}
                   />
                   <label className="ml-2 text-gray-700" htmlFor="all-time">
@@ -419,7 +297,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
                     id="during-trip"
                     name="pushData"
                     value="during-trip"
-                    checked={formValues.pushData === "during-trip"}
+                    checked={trackFormValues.pushData === "during-trip"}
                     onChange={handleInputChange}
                   />
                   <label className="ml-2 text-gray-700" htmlFor="during-trip">
@@ -509,7 +387,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
                         className="block w-1/2 py-1 px-3 text-sm border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         placeholder="Key"
                         onChange={(e) =>
-                          handleAddOnFieldChange(index, 0, e.target.value)
+                          handleFixedFieldChange(keyField, e.target.value)
                         }
                       />
                       <input
@@ -518,7 +396,7 @@ const TrackDataForm: React.FC<Props> = ({ tripData, onSubmit }) => {
                         className="block w-1/2 py-1 px-3 text-sm border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         placeholder="Value"
                         onChange={(e) =>
-                          handleAddOnFieldChange(index, 1, e.target.value)
+                          handleFixedFieldChange(valueField, e.target.value)
                         }
                       />
                       <button

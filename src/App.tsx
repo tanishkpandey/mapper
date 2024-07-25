@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import "./App.css";
-import TripsDataForm from "./components/TripDataForm";
-import TrackDataForm from "./components/TrackDataForm";
-import { MdRoute } from "react-icons/md";
-import { GrLocationPin } from "react-icons/gr";
-import { Trip } from "./components/TripData";
-import { Track } from "./components/TrackData";
-import ConvoyForm from "./components/ConvoyForm";
+// App.tsx
+import React, { useState } from 'react';
+import './App.css';
+import TripsDataForm from './components/TripDataForm';
+import TrackDataForm from './components/TrackDataForm';
+import ConvoyForm from './components/ConvoyForm';
+import { MdRoute } from 'react-icons/md';
+import { GrLocationPin } from 'react-icons/gr';
+import { FormProvider } from './context/FormContext';
+import { Trip } from './components/TripData';
+import { Track } from './components/TrackData';
 
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("Trips");
+  const [activeTab, setActiveTab] = useState<string>('Trips');
   const [tripData, setTripData] = useState<any>({
     TripDataMapper: Trip,
     TripDataAddOnFields: {},
@@ -18,7 +20,7 @@ const App: React.FC = () => {
     TrackDataMapper: Track,
     TrackDataAddOnFields: {},
   });
-
+  const [responseData, setResponseData] = useState(null);
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
@@ -33,19 +35,23 @@ const App: React.FC = () => {
     console.log("Track Form Data:", data);
   };
 
+  const handleConvoyResponse = (responseData: any) => {
+    setTripData(responseData);
+    setActiveTab('Trips');
+  };
+
   return (
-    <>
+    <FormProvider>
       <div className="max-w-[1800px] rounded flex">
         <ul className="flex-column space-y space-y-4 text-sm font-medium text-gray-500 me-4 mb-4 md:mb-0">
           <li>
             <a
               href="#"
-              onClick={() => handleTabClick("Trips")}
-              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${
-                activeTab === "Trips"
-                  ? "text-white bg-blue-700"
-                  : "hover:text-gray-900 bg-gray-50 hover:bg-gray-100"
-              }`}
+              onClick={() => handleTabClick('Trips')}
+              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${activeTab === 'Trips'
+                ? 'text-white bg-blue-700'
+                : 'hover:text-gray-900 bg-gray-50 hover:bg-gray-100'
+                }`}
             >
               <MdRoute className="text-lg" />
               Trips
@@ -55,12 +61,11 @@ const App: React.FC = () => {
           <li>
             <a
               href="#"
-              onClick={() => handleTabClick("Track")}
-              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${
-                activeTab === "Track"
-                  ? "text-white bg-blue-700"
-                  : "hover:text-gray-900 bg-gray-50 hover:bg-gray-100"
-              }`}
+              onClick={() => handleTabClick('Track')}
+              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${activeTab === 'Track'
+                ? 'text-white bg-blue-700'
+                : 'hover:text-gray-900 bg-gray-50 hover:bg-gray-100'
+                }`}
             >
               <GrLocationPin className="text-lg" />
               Track
@@ -70,12 +75,11 @@ const App: React.FC = () => {
           <li>
             <a
               href="#"
-              onClick={() => handleTabClick("EndPointCreation")}
-              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${
-                activeTab === "EndPointCreation"
-                  ? "text-white bg-blue-700"
-                  : "hover:text-gray-900 bg-gray-50 hover:bg-gray-100"
-              }`}
+              onClick={() => handleTabClick('EndPointCreation')}
+              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${activeTab === 'EndPointCreation'
+                ? 'text-white bg-blue-700'
+                : 'hover:text-gray-900 bg-gray-50 hover:bg-gray-100'
+                }`}
             >
               <GrLocationPin className="text-lg" />
               Create Endpoint
@@ -84,28 +88,28 @@ const App: React.FC = () => {
         </ul>
 
         <div className="text-medium text-gray-500 rounded-lg w-full">
-          {activeTab === "Trips" && (
+
+          {activeTab === 'Trips' && (
             <div>
-              <TripsDataForm
-                trackData={trackData}
-                onSubmit={handleTripSubmit}
-              />
-            </div>
-          )}
-          {activeTab === "Track" && (
-            <div>
-              <TrackDataForm tripData={tripData} onSubmit={handleTrackSubmit} />
+              <TripsDataForm trackData={trackData} onSubmit={handleTripSubmit} responseData={responseData} />
             </div>
           )}
 
-          {activeTab === "EndPointCreation" && (
+          {activeTab === 'Track' && (
             <div>
-              <ConvoyForm />
+              <TrackDataForm tripData={tripData} onSubmit={handleTrackSubmit}  responseData={responseData} />
             </div>
           )}
+
+          {activeTab === 'EndPointCreation' && (
+            <div>
+              <ConvoyForm setResponseData={setResponseData} />
+            </div>
+          )}
+
         </div>
       </div>
-    </>
+    </FormProvider>
   );
 };
 

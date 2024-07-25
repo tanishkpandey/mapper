@@ -10,12 +10,16 @@ interface AuthValues {
   tokenValue?: string;
 }
 
-const ConvoyForm: React.FC = () => {
+interface ConvoyFormProps {
+  setResponseData: (data: any) => void;
+}
+
+const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
   const [authMethod, setAuthMethod] = useState<string>("");
   const [authValues, setAuthValues] = useState<AuthValues>({});
   const [generatedToken, setGeneratedToken] = useState<string>("");
   const [formValues, setFormValues] = useState({
-    convoyUrl: "http://103.20.214.75:5005",
+    convoyUrl: "https://convoy.imztech.io",
     url: "",
     support_email: "",
     secret: "",
@@ -48,43 +52,47 @@ const ConvoyForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const authHeaderValue =
+      authMethod === "BasicAuth"
+        ? `Basic ${btoa(`${authValues.useName}:${authValues.password}`)}`
+        : `Bearer ${authValues.tokenValue}`;
+
     const payload = {
-      "advanced_signatures": true,
-      "appID": "01J3K08ESQ1SJC08RY9PY87KQJ",
-      "authentication": {
-        "api_key": {
-          "header_name": "Authorization",
-          "header_value": "Bearer CO.2xkcKo6wjkxb3XXq.QWhuAfCtPU4xtr3BVnNr1vDWhL5kPGo0UQeHyyozYEhui0ciaHVRG5SCPVWKgJcn"
+      advanced_signatures: true,
+      appID: "01J3K08ESQ1SJC08RY9PY87KQJ",
+      authentication: {
+        api_key: {
+          header_name: "Authorization",
+          header_value: `Bearer ${formValues.apiKey}`,
         },
-        "type": "api_key"
+        type: "api_key",
       },
-      "description": "this",
-      "http_timeout": 10,
-      "is_disabled": true,
-      "name": "mala2",
-      "owner_id": "01J3K07Y3NC9VR5W7A3HYFKPJM",
-      "rate_limit": 10,
-      "rate_limit_duration": 10,
-      "secret": "",
-      "slack_webhook_url": "",
-      "support_email": "malav.naagar@imzcoprorate.com",
-      "url": "https://webhook.site/c1c51810-6160-4b74-8c27-5bbfdec5dbe7"
-    }
+      description: "this",
+      http_timeout: 10,
+      is_disabled: formValues.is_disabled,
+      name: formValues.name,
+      owner_id: "01J3K07Y3NC9VR5W7A3HYFKPJM",
+      rate_limit: parseInt(formValues.rate_limit),
+      rate_limit_duration: parseInt(formValues.rate_limit_duration),
+      secret: formValues.secret,
+      slack_webhook_url: "",
+      support_email: formValues.support_email,
+      url: formValues.url,
+    };
 
     try {
       const response = await axios.post(
-        "https://cors-anywhere.herokuapp.com/https://convoy.imztech.io/api/v1/projects/01J3J24Z3FWTVW6FXJR6X5PT1J/endpoints",
+        `https://convoy.imztech.io/api/v1/projects/01J3J24Z3FWTVW6FXJR6X5PT1J/endpoints`,
         payload,
         {
           headers: {
-            "Content-Type": "application/json",
-            // "Access-Control-Allow-Origin": "*",
-            // "Access-Control-Allow-Methods": "*",
+            Authorization: `Bearer ${formValues.apiKey}`,
           },
         }
       );
 
       console.log("Response data:", response.data);
+      setResponseData(response.data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -103,19 +111,18 @@ const ConvoyForm: React.FC = () => {
         [name]: value,
       };
 
-      if (
-        authMethod === "BasicAuth" &&
-        updatedValues.useName &&
-        updatedValues.password
-      ) {
-        const token = btoa(
-          `${updatedValues.useName}:${updatedValues.password}`
-        );
+      if (authMethod === "BasicAuth" && updatedValues.useName && updatedValues.password) {
+        const token = btoa(`${updatedValues.useName}:${updatedValues.password}`);
         updatedValues.basicAuthToken = `Basic ${token}`;
         setGeneratedToken(updatedValues.basicAuthToken);
         setFormValues((prevValues) => ({
           ...prevValues,
           secret: updatedValues.basicAuthToken,
+        }));
+      } else if (authMethod === "Bearer") {
+        setFormValues((prevValues) => ({
+          ...prevValues,
+          secret: value,
         }));
       }
 
@@ -215,15 +222,6 @@ const ConvoyForm: React.FC = () => {
                     placeholder="Password"
                     aria-label="Password"
                   />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setGeneratedToken(authValues.basicAuthToken || "")
-                    }
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Generate
-                  </button>
                 </div>
               )}
               {authMethod === "Bearer" && (
@@ -237,15 +235,6 @@ const ConvoyForm: React.FC = () => {
                     placeholder="Token"
                     aria-label="Token"
                   />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setGeneratedToken(authValues.tokenValue || "")
-                    }
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Generate Token
-                  </button>
                   {generatedToken && (
                     <div className="mt-4 p-2 border border-gray-300 rounded-md shadow-sm">
                       <label className="block text-gray-700 font-medium mb-2 text-sm">
@@ -266,7 +255,7 @@ const ConvoyForm: React.FC = () => {
                 type="text"
                 name="secret"
                 disabled
-                value={generatedToken}
+                value={formValues.secret}
                 className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Secret"
                 aria-label="Secret"
