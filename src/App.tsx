@@ -9,8 +9,9 @@ import { Trip } from "./components/TripData";
 import { Track } from "./components/TrackData";
 import TripsDataForm from "./components/TripDataForm";
 import { FormProvider, useFormContext } from "./context/FormContext";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import CombinedDataForm from "./components/CombinedDataForm";
+// import { ToastContainer } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("EndPointCreation");
   const [tripData, setTripData] = useState<any>({
@@ -37,6 +38,10 @@ const App: React.FC = () => {
     console.log("Track Form Data:", data);
   };
 
+  const handleCombinedSubmit = (data: any) => {
+    console.log("Combined Form Data:", data);
+  };
+
   const handleSaveConfiguration = () => {
     const { tripFormValues, trackFormValues, combinedValues } =
       useFormContext();
@@ -47,51 +52,62 @@ const App: React.FC = () => {
 
   return (
     <FormProvider>
-      <ToastContainer />
+      {/*  <ToastContainer /> */}
       <div className="rounded flex">
         <ul className="flex-column space-y space-y-4 text-sm font-medium w-[200px] text-gray-500 me-4 mb-4 md:mb-0">
           <li>
             <a
               href="#"
               onClick={() => handleTabClick("EndPointCreation")}
-              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${
-                activeTab === "EndPointCreation"
-                  ? "text-white bg-blue-700"
-                  : "hover:text-gray-900 bg-gray-50 hover:bg-gray-100"
-              }`}
+              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${activeTab === "EndPointCreation"
+                ? "text-white bg-blue-700"
+                : "hover:text-gray-900 bg-gray-50 hover:bg-gray-100"
+                }`}
             >
               <GrLocationPin className="text-lg" />
               Create Endpoint
             </a>
           </li>
 
-          <li>
+          {/* <li>
             <a
               href="#"
               onClick={() => handleTabClick("Trips")}
-              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${
-                activeTab === "Trips"
-                  ? "text-white bg-blue-700"
-                  : "hover:text-gray-900 bg-gray-50 hover:bg-gray-100"
-              }`}
+              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${activeTab === "Trips"
+                ? "text-white bg-blue-700"
+                : "hover:text-gray-900 bg-gray-50 hover:bg-gray-100"
+                }`}
             >
               <MdRoute className="text-lg" />
               Trips
             </a>
-          </li>
+          </li> */}
+
+          {/* <li>
+            <a
+              href="#"
+              onClick={() => handleTabClick("Track")}
+              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${activeTab === "Track"
+                ? "text-white bg-blue-700"
+                : "hover:text-gray-900 bg-gray-50 hover:bg-gray-100"
+                }`}
+            >
+              <GrLocationPin className="text-lg" />
+              Track
+            </a>
+          </li> */}
 
           <li>
             <a
               href="#"
-              onClick={() => handleTabClick("Track")}
-              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${
-                activeTab === "Track"
-                  ? "text-white bg-blue-700"
-                  : "hover:text-gray-900 bg-gray-50 hover:bg-gray-100"
-              }`}
+              onClick={() => handleTabClick("Combined")}
+              className={`inline-flex items-center px-4 py-3 rounded-lg w-full gap-2 ${activeTab === "Combined"
+                ? "text-white bg-blue-700"
+                : "hover:text-gray-900 bg-gray-50 hover:bg-gray-100"
+                }`}
             >
               <GrLocationPin className="text-lg" />
-              Track
+              Combined
             </a>
           </li>
 
@@ -129,6 +145,14 @@ const App: React.FC = () => {
           {activeTab === "EndPointCreation" && (
             <div>
               <ConvoyForm setResponseData={setResponseData} />
+            </div>
+          )}
+          {activeTab === "Combined" && (
+            <div>
+              <CombinedDataForm
+                onSubmit={handleCombinedSubmit}
+                responseData={responseData}
+              />
             </div>
           )}
         </div>

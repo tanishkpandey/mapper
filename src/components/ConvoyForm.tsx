@@ -79,7 +79,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
       support_email: formValues.support_email,
       url: formValues.url,
     };
-    
+
     try {
       const response = await axios.post(
         `https://convoy.imztech.io/api/v1/projects/01J3J24Z3FWTVW6FXJR6X5PT1J/endpoints`,
@@ -142,13 +142,13 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
         onSubmit={handleSubmit}
         className="p-8 bg-white border shadow-lg rounded-lg mx-auto h-[90vh] overflow-y-scroll"
       >
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+        <h2 className="text-2xl font-semibold mb-6 text-blue-700">
           Convoy Configuration Form
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div>
             <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
+              <label className="text-left block text-blue-700 font-medium mb-2 text-sm">
                 Convoy URL
               </label>
               <input
@@ -157,14 +157,14 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 disabled
                 value={formValues.convoyUrl}
                 onChange={handleInputChange}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 placeholder="Convoy URL"
                 aria-label="Convoy URL"
               />
             </div>
 
             <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
+              <label className="text-left block text-blue-700 font-medium mb-2 text-sm">
                 Webhook URL
               </label>
               <input
@@ -172,14 +172,14 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 name="url"
                 value={formValues.url}
                 onChange={handleInputChange}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 placeholder="Webhook URL"
                 aria-label="Webhook URL"
               />
             </div>
 
             <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
+              <label className="text-left block text-blue-700 font-medium mb-2 text-sm">
                 Support Email
               </label>
               <input
@@ -187,14 +187,14 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 name="support_email"
                 value={formValues.support_email}
                 onChange={handleInputChange}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 placeholder="Support Email"
                 aria-label="Support Email"
               />
             </div>
 
             <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
+              <label className="text-left block text-blue-700 font-medium mb-2 text-sm">
                 Authentication
               </label>
               <select
@@ -202,7 +202,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 name="authMethod"
                 value={authMethod}
                 onChange={handleAuthChange}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               >
                 <option value="">Select Authentication</option>
                 <option value="BasicAuth">Basic Auth</option>
@@ -215,7 +215,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                     name="useName"
                     value={authValues.useName || ""}
                     onChange={handleAuthValueChange}
-                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                     placeholder="Username"
                     aria-label="Username"
                   />
@@ -224,7 +224,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                     name="password"
                     value={authValues.password || ""}
                     onChange={handleAuthValueChange}
-                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                     placeholder="Password"
                     aria-label="Password"
                   />
@@ -237,13 +237,13 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                     name="tokenValue"
                     value={authValues.tokenValue || ""}
                     onChange={handleAuthValueChange}
-                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                     placeholder="Token"
                     aria-label="Token"
                   />
                   {generatedToken && (
-                    <div className="mt-4 p-2 border border-gray-300 rounded-md shadow-sm">
-                      <label className="block text-gray-700 font-medium mb-2 text-sm">
+                    <div className="mt-4 p-2 border border-blue-300 rounded-md shadow-sm">
+                      <label className="block text-blue-700 font-medium mb-2 text-sm">
                         Generated Token
                       </label>
                       <p className="break-all">{generatedToken}</p>
@@ -254,7 +254,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
             </div>
 
             <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
+              <label className="text-left block text-blue-700 font-medium mb-2 text-sm">
                 Secret
               </label>
               <input
@@ -262,14 +262,14 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 name="secret"
                 disabled
                 value={formValues.secret}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 placeholder="Secret"
                 aria-label="Secret"
               />
             </div>
 
             <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
+              <label className="text-left block text-blue-700 font-medium mb-2 text-sm">
                 Rate Limit
               </label>
               <input
@@ -277,7 +277,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 name="rate_limit"
                 value={formValues.rate_limit}
                 onChange={handleInputChange}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 placeholder="Rate Limit"
                 aria-label="Rate Limit"
               />
@@ -286,7 +286,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
 
           <div>
             <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
+              <label className="text-left block text-blue-700 font-medium mb-2 text-sm">
                 Rate Limit Duration (in seconds)
               </label>
               <input
@@ -294,14 +294,14 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 name="rate_limit_duration"
                 value={formValues.rate_limit_duration.replace("s", "")}
                 onChange={handleInputChange}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 placeholder="Rate Limit Duration"
                 aria-label="Rate Limit Duration"
               />
             </div>
 
             <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
+              <label className="text-left block text-blue-700 font-medium mb-2 text-sm">
                 Owner ID
               </label>
               <input
@@ -309,14 +309,14 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 name="owner_id"
                 disabled
                 value="01J3A1HF8GWDJF0Z1XQGDKN8FE"
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 placeholder="Owner ID"
                 aria-label="Owner ID"
               />
             </div>
 
             <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
+              <label className="text-left block text-blue-700 font-medium mb-2 text-sm">
                 Name
               </label>
               <input
@@ -324,28 +324,25 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 name="name"
                 value={formValues.name}
                 onChange={handleInputChange}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 placeholder="Name"
                 aria-label="Name"
               />
             </div>
 
-            <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
-                Disabled
-              </label>
+            <div className="mb-6 flex items-center">
               <input
                 type="checkbox"
                 name="is_disabled"
                 checked={formValues.is_disabled}
                 onChange={handleInputChange}
-                className="h-4 w-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                className="h-4 w-4 mr-2 text-indigo-600 border-blue-300 rounded focus:ring-indigo-500"
               />
-              <span>True</span>
+              <span className="text-blue-700 font-medium">Disabled</span>
             </div>
 
             <div className="mb-6">
-              <label className="text-left block text-gray-700 font-medium mb-2 text-sm">
+              <label className="text-left block text-blue-700 font-medium mb-2 text-sm">
                 API Key
               </label>
               <input
@@ -353,7 +350,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
                 name="apiKey"
                 value={formValues.apiKey}
                 onChange={handleInputChange}
-                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="block w-full p-2 border border-blue-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 placeholder="API Key"
                 aria-label="API Key"
               />
@@ -366,7 +363,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
             type="submit"
             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Save Configuration
+            Create Endpoint
           </button>
         </div>
       </form>
