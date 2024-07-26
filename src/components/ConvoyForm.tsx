@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 interface AuthValues {
   basicAuthToken?: string;
@@ -59,7 +60,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
 
     const payload = {
       advanced_signatures: true,
-      appID: "01J3K08ESQ1SJC08RY9PY87KQJ",
+      appID: "01J3PVT503YKZNMTQZVXG3BM10",
       authentication: {
         api_key: {
           header_name: "Authorization",
@@ -80,9 +81,11 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
       url: formValues.url,
     };
 
+    const toastId = toast.loading("Creating endpoint...");
+
     try {
       const response = await axios.post(
-        `https://convoy.imztech.io/api/v1/projects/01J3J24Z3FWTVW6FXJR6X5PT1J/endpoints`,
+        `https://convoy.imztech.io/api/v1/projects/01J3PVT503YKZNMTQZVXG3BM10/endpoints`,
         payload,
         {
           headers: {
@@ -93,8 +96,22 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
 
       console.log("Response data:", response.data);
       setResponseData(response.data);
+
+      toast.update(toastId, {
+        render: "Endpoint created successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
     } catch (error) {
       console.error("Error:", error);
+
+      toast.update(toastId, {
+        render: "Error creating endpoint.",
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
     }
   };
 
@@ -138,6 +155,7 @@ const ConvoyForm: React.FC<ConvoyFormProps> = ({ setResponseData }) => {
 
   return (
     <PerfectScrollbar>
+      <ToastContainer />
       <form
         onSubmit={handleSubmit}
         className="p-8 bg-white border shadow-lg rounded-lg mx-auto h-[90vh] overflow-y-scroll"
